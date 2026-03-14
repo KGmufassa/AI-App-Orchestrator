@@ -1,140 +1,136 @@
 import fs from "fs"
 import { execSync } from "child_process"
 
-function ensureTestDirs() {
+const PACKAGE_FILE = "package.json"
 
-  fs.mkdirSync("tests/backend", { recursive: true })
-  fs.mkdirSync("tests/frontend", { recursive: true })
-
+function run(cmd) {
+  execSync(cmd, { stdio: "inherit" })
 }
 
-function detectBackendRoutes() {
+function ensurePackageJson() {
 
-  const routesDir = "backend/routes"
+  if (!fs.existsSync(PACKAGE_FILE)) {
 
-  if (!fs.existsSync(routesDir)) return []
+    console.log("Initializing package.json")
 
-  return fs.readdirSync(routesDir)
-    .map(file => file.replace(".js",""))
-
-}
-
-function detectFrontendPages() {
-
-  const pagesDir = "frontend/pages"
-
-  if (!fs.existsSync(pagesDir)) return []
-
-  return fs.readdirSync(pagesDir)
-    .map(file => file.replace(".jsx",""))
-
-}
-
-function generateBackendTest(route) {
-
-  const code = `
-import request from "supertest"
-import app from "../../backend/server.js"
-
-describe("${route} API", () => {
-
-  it("should respond successfully", async () => {
-
-    const res = await request(app).get("/${route}")
-
-    expect(res.statusCode).toBeLessThan(500)
-
-  })
-
-})
-`
-
-  fs.writeFileSync(
-    `tests/backend/${route}.test.js`,
-    code
-  )
-
-}
-
-function generateFrontendTest(page) {
-
-  const code = `
-import { render } from "@testing-library/react"
-import ${page} from "../../frontend/pages/${page}.jsx"
-
-test("${page} renders", () => {
-
-  render(<${page}/>)
-
-})
-`
-
-  fs.writeFileSync(
-    `tests/frontend/${page}.test.js`,
-    code
-  )
-
-}
-
-function runTests() {
-
-  try {
-
-    execSync("npm test", { stdio: "inherit" })
-
-    return "PASSED"
-
-  } catch (err) {
-
-    return "FAILED"
+    run("npm init -y")
 
   }
 
 }
 
-function writeReport(status, backendTests, frontendTests) {
+function ensurePlaywrightInstalled() {
 
-  const report = `
-# Test Report
+  const pkg = JSON.parse(fs.readFileSync(PACKAGE_FILE))
 
-Backend Tests Generated:
-${backendTests.join("\n")}
+  const devDeps = pkg.devDependencies || {}
 
-Frontend Tests Generated:
-${frontendTests.join("\n")}
+  if (!devDeps["@playwright/test"]) {
 
-Test Result:
-${status}
+    console.log("Installing Playwright")
 
-Time:
-${new Date().toISOString()}
+    run("npm install -D @playwright/test")
+
+    run("npx playwright install")
+
+  }
+
+}
+
+function ensurePlaywrightConfig() {
+
+  if (!fs.existsSync("playwright.config.js")) {
+
+    console.log("Creating Playwright config")
+
+    const config = `
+import { defineConfig } from '@playwright/test'
+
+export default defineConfig({
+  testDir: './tests/e2e',
+  timeout: 30000,
+  use: {
+    baseURL: 'http://localhost:3000',
+    headless: true
+  }
+})
 `
 
-  fs.writeFileSync(
-    "docs/reference/test-report.md",
-    report
-  )
+    fs.writeFileSync("playwright.config.js", config)
+
+  }
+
+}
+
+function ensureE2EDirectory() {
+
+  fs.mkdirSync("tests/e2e", { recursive: true })
+
+}
+
+function updatePackageScripts() {
+
+  const pkg = JSON.parse(fs.readFileSync(PACKAGE_FILE))
+
+  if (!pkg.scripts) pkg.scripts = {}
+
+  if (!pkg.scripts["test:e2e"]) {
+
+    console.log("Adding Playwright script to package.json")
+
+    pkg.scripts["test:e2e"] = "playwright test"
+
+    fs.writeFileSync(
+      PACKAGE_FILE,
+      JSON.stringify(pkg, null, 2)
+    )
+
+  }
+
+}
+
+function runUnitTests() {
+
+  if (!fs.existsSync(PACKAGE_FILE)) return
+
+  const pkg = JSON.parse(fs.readFileSync(PACKAGE_FILE))
+
+  if (pkg.scripts && pkg.scripts.test) {
+
+    console.log("Running unit tests")
+
+    run("npm test")
+
+  }
+
+}
+
+function runPlaywrightTests() {
+
+  console.log("Running Playwright E2E tests")
+
+  run("npx playwright test")
 
 }
 
 export default async function testRunner() {
 
-  console.log("Generating test suite")
+  console.log("Preparing test environment")
 
-  ensureTestDirs()
+  ensurePackageJson()
 
-  const backendRoutes = detectBackendRoutes()
-  const frontendPages = detectFrontendPages()
+  ensurePlaywrightInstalled()
 
-  backendRoutes.forEach(generateBackendTest)
-  frontendPages.forEach(generateFrontendTest)
+  ensurePlaywrightConfig()
+
+  ensureE2EDirectory()
+
+  updatePackageScripts()
 
   console.log("Running tests")
 
-  const result = runTests()
+  runUnitTests()
 
-  writeReport(result, backendRoutes, frontendPages)
-
-  console.log(`Test execution complete (${result})`)
+  runPlaywrightTests()
 
 }
