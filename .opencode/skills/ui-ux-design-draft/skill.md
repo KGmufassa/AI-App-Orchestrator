@@ -209,7 +209,7 @@ All pages must be deterministic and implementation-ready.
 
 Write file to:
 
-`/frontend/ui-ux design/ui-ux-draft.md`
+`/frontend/ui-ux-design/ui-ux-draft.md`
 
 If folder does not exist:
 - Create it.
