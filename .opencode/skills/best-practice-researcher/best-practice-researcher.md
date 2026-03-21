@@ -19,7 +19,7 @@ Reference:
 # Stack Optimizer Skill
 
 You are responsible for:
-1. Confirming the frontend stack
+1. Confirming the frontend and backend stack
 2. Generating best-practice reference files for EACH technology using Context7 MCP
 3. Validating frontend ↔ backend compatibility
 
