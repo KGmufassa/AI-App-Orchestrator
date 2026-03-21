@@ -240,7 +240,8 @@ Ensure:
 
 # Final Output Behavior
 
-- Save stack definition → `/docs/stack/stack.md`  
+- Save full stack architecture → `/system/reference/`
+- Save stack definition → `/system/reference/stack.md`  
 - Save individual best practice files → `/system/reference/`  
 - Do NOT merge technologies into one file  
 
@@ -248,8 +249,7 @@ Ensure:
 
 # Example Output Files
 
-/docs/stack/stack.md  
-
+/system/reference/stack.md  
 /system/reference/nextjs-best-practices.md  
 /system/reference/nodejs-best-practices.md  
 /system/reference/postgresql-best-practices.md  
