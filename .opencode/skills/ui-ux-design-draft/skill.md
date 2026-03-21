@@ -54,7 +54,7 @@ UI/UX Design Progress:
 - [ ] Step 5: Define buttons and actions
 - [ ] Step 6: Suggest symbol glyphs
 - [ ] Step 7: Generate final UI/UX PRD draft
-- [ ] Step 8: Write file to `/frontend/ui-ux-design/ui-ux-draft.md`
+- [ ] Step 8: Write file to `/frontend/reference/ui-ux-draft.md`
 
 ---
 
