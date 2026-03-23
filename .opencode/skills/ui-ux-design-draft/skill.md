@@ -187,15 +187,15 @@ If branding is custom, ask before deciding.
 
 Output structured document:
 
-UI/UX PRD
-Visual Identity
-Navigation System
-Page Architecture
-Detailed Page Definitions
-Component Library Overview
-Interaction Rules
-Accessibility Rules
-Design Guardrails
+- UI/UX PRD
+- Visual Identity
+- Navigation System
+- Page Architecture
+- Detailed Page Definitions
+- Component Library Overview
+- Interaction Rules
+- Accessibility Rules
+- Design Guardrails
 
 All pages must be deterministic and implementation-ready.
 
