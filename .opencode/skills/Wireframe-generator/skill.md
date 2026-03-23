@@ -1,11 +1,7 @@
 ---
 name: creating-dynamic-wireframes
 description: Reads product documentation or PRD files and generates structured, low-fidelity wireframes with deterministic page architecture, state definitions, trigger mapping, and annotated ASCII layouts. Supports dynamic workflow detection and safe update mode.
-compatibility: opencode
-metadata:
-  domain: frontend
-  workflow: dynamic-wireframe-generation
-  output: wireframes
+Default file: docs/Frontend/ui-ux-design/ux-flows/overview.md
 ---
 
 # Creating Dynamic Wireframes
@@ -45,7 +41,7 @@ It asks one clarifying question at a time when required.
 ## Automatic Modes
 
 If a file is provided → `interpret-file` mode  
-If no file is provided → `manual` mode  
+If no file is provided → `interpret default file` mode  
 If updating an existing wireframe file → `update` mode  
 
 ---
