@@ -239,8 +239,8 @@ Write files to:
 
 Create:
 
-/frontend/reference/wireframes/overview.md  
-/frontend/reference/wireframes/[page-name].md  
+/frontend/ui-ux-design/wireframes/overview.md  
+/frontend/ui-ux-design/wireframes/[page-name].md  
 
 If updating:
 - Append new pages
