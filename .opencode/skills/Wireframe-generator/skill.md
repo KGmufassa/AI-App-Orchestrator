@@ -146,6 +146,7 @@ Use structured low-fidelity layout.
 
 Example:
 
+```
 +----------------------------------+
 | HEADER                          |
 | [Logo] [Nav] [Nav] [CTA]        |
@@ -161,7 +162,7 @@ Example:
 +----------------------------------+
 | FOOTER                          |
 +----------------------------------+
-
+```
 All components must be labeled.
 
 ---
