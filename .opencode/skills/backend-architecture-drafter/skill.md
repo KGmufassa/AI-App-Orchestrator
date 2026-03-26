@@ -1,5 +1,5 @@
 ---
-name: backend-architect
+name: backend-architect-drafter
 description: |
   Infers backend requirements, interactively gathers architecture decisions,
   generates backend architecture, and defines API contracts.
