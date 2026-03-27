@@ -1,0 +1,89 @@
+# ULTRA-MINIMAL EXECUTION PROTOCOL
+
+## PURPOSE
+Define the minimum required structure for consistent task execution and skill chaining.
+
+---
+
+## CORE STRUCTURE
+
+{
+  "task_id": "",
+  "status": "pending | running | completed | failed",
+  "skill": "",
+  "input": {},
+  "output": {},
+  "error": null
+}
+
+---
+
+## RULES
+
+1. Every task MUST have a task_id
+2. Every execution MUST update status
+3. Output MUST be structured JSON
+4. Errors MUST be captured in "error"
+5. No free-form text outputs allowed
+
+---
+
+## MULTI-SKILL CHAINING
+
+Each step receives:
+
+{
+  "previous_output": {},
+  "current_input": {}
+}
+
+RULE:
+- previous_output becomes input for next skill
+
+---
+
+## CONTROLLED EXECUTION (REQUIRED)
+
+run-subtask-skill.md must receive:
+
+{
+  "skills": [],
+  "execution_order": [],
+  "context": "isolated"
+}
+
+---
+
+## PARALLEL TASKS
+
+{
+  "parallel_tasks": [
+    {"task_id": ""},
+    {"task_id": ""}
+  ]
+}
+
+---
+
+## ERROR HANDLING
+
+{
+  "status": "failed",
+  "error": {
+    "message": "",
+    "recoverable": true
+  }
+}
+
+---
+
+## COMPLETION
+
+{
+  "status": "completed",
+  "output": {}
+}
+
+---
+
+## END
