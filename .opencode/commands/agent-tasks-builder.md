@@ -1,189 +1,184 @@
 ---
-name: orchestrate
-description: Analyze project documents and available skills, determine optimal execution strategy, and route the task via direct execution, subtask-skill, multi-skill chaining, or temporary agent creation.
-agent: build
-subtask: true
+name: construct-agent
+description: Ingest a task list or implementation plan, analyze available skills, and construct a bounded agent configuration best suited to execute the current workload.
 ---
 
-# /orchestrate
+# /construct-agent
 
 ## Purpose
 
-This command acts as the orchestration control layer.
+This command analyzes a task list and dynamically constructs the most appropriate agent configuration to execute those tasks.
 
 It:
 
-1. Reads user-defined documents.
-2. Reads available skills.
-3. Analyzes the requested task.
-4. Determines the optimal execution strategy.
-5. Executes via:
-   - Direct skill
-   - subtask-skill
-   - Skill chaining
-   - Temporary agent creation
+1. Reads task list or implementation list.
+2. Scans available skills.
+3. Clusters tasks by domain.
+4. Determines if one agent or multiple agents are required.
+5. Assigns relevant skills.
+6. Defines scope boundaries.
+7. Determines execution mode (subtask or same context).
+8. Outputs agent definition and execution plan.
 
-It never performs the task directly unless explicitly required.
+It does NOT execute tasks automatically unless explicitly confirmed.
 
 ---
 
-# Execution Flow
-
-## Step 1 — Ingest Context
+# Step 1 — Ingest Task List
 
 Read:
 
-- PRDs
-- stack-definition.md
-- flow documents
-- agent definitions
-- available skills
+- tasks/*
+- implementation list
+- provided checklist
+- bullet-based plan
 
 Extract:
 
-- Task intent
-- Scope
-- File impact
-- Domain classification
-- Dependencies
-- Required output type
+- Domain of each task
+- Files impacted
+- Required outputs
+- Complexity level
+- Dependencies between tasks
 
 ---
 
-## Step 2 — Skill Inventory
+# Step 2 — Domain Clustering
 
-List all available skills.
-
-For each skill identify:
-
-- Domain
-- Inputs required
-- Outputs generated
-- Tool usage
-- Side effects
-
-Create capability map.
-
----
-
-## Step 3 — Task Classification
-
-Classify task as:
+Group tasks into domains:
 
 - UI/UX
 - Backend
 - Database
 - Architecture
-- Research
 - Testing
-- Multi-domain
-- Documentation
 - DevOps
+- Documentation
+- Multi-domain
 
-Determine:
+If all tasks fall into one domain:
+→ Single agent.
 
-- Single-domain?
-- Cross-domain?
-- High-risk?
-- Long-running?
-- File-impact heavy?
-
----
-
-## Step 4 — Routing Decision
-
-### If existing skill fully satisfies task:
-→ Execute that skill.
-
-### If multiple skills required:
-→ Chain skills.
-→ Determine execution order.
-
-### If no skill matches:
-→ Create temporary bounded agent.
+If tasks span multiple domains:
+→ Multi-agent configuration.
 
 ---
 
-# Subtask vs Same Context Logic
+# Step 3 — Skill Scan
 
-Use `subtask-skill` when:
+List all available skills.
 
-- Task is independent.
-- Requires isolated reasoning.
-- Risk of context pollution.
-- Long-running.
-- Heavy file modification.
+For each skill determine:
 
-Use same context when:
+- Domain alignment
+- Input compatibility
+- Output type
+- File scope
+- Tool requirements
 
-- Small task.
-- Requires shared reasoning.
-- Iterative refinement.
-- Cross-skill dependency within same reasoning window.
+Create skill-to-task mapping matrix.
 
-If ambiguous:
+---
+
+# Step 4 — Agent Construction Logic
+
+If existing skill directly covers task cluster:
+→ Use that skill as core agent behavior.
+
+If multiple skills required:
+→ Compose agent with skill chaining.
+
+If no skill matches:
+→ Create temporary bounded agent with explicit workflow.
+
+---
+
+# Step 5 — Agent Definition Template
+
+Generated Agent must include:
+
+# Agent: [Generated Name]
+
+## Mission
+Concise task objective.
+
+## Scope
+Allowed directories:
+Prohibited directories:
+
+## Assigned Skills
+- Skill A
+- Skill B
+
+## Tools Allowed
+Explicitly inherited from assigned skills.
+
+## Workflow
+Deterministic sequence of steps.
+
+## Validation Checklist
+Pre-output checks.
+
+## Execution Mode
+Subtask / Same Context
+
+## Dependencies
+Which tasks must complete first.
+
+---
+
+# Step 6 — Execution Mode Decision
+
+Use Subtask if:
+
+- Heavy file modifications
+- Isolated domain
+- Large reasoning workload
+- Risk of context overflow
+
+Use Same Context if:
+
+- Small batch
+- Iterative refinement
+- Shared reasoning required
+
+If unclear:
 Ask user.
 
 ---
 
-# Temporary Agent Template
+# Step 7 — Conflict Detection
 
-If required:
-
-Create bounded agent:
-
-Mission:
-Scope:
-Allowed Files:
-Prohibited Files:
-Tools Allowed:
-Workflow Steps:
-Validation Checklist:
-Failure Protocol:
-
-Agent must respect:
-- stack-definition.md
-- Governance rules
-- File ownership matrix
-
----
-
-# Conflict Detection
-
-Before execution:
+Before confirming:
 
 Check:
 
 - Scope overlap
-- Stack violations
-- File ownership collision
-- Skill redundancy
-- Circular dependency
+- Duplicate ownership
+- Skill conflicts
+- Stack-definition violations
+- Circular task dependencies
 
 If conflict:
-Pause and request clarification.
+Pause and clarify.
 
 ---
 
-# Execution Plan Output
-
-Before running:
+# Step 8 — Output Plan
 
 Return:
 
-Execution Plan:
+## Agent Construction Plan
 
-1. Selected Skill(s)
-2. Execution Mode (Subtask / Same Context)
-3. Temporary Agent Created? (Yes/No)
-4. Files Impacted
-5. Validation Strategy
-6. Risk Assessment
+1. Agent Name
+2. Tasks Assigned
+3. Skills Used
+4. Execution Mode
+5. Files Impacted
+6. Validation Layer
+7. Risks Identified
 
-Require confirmation if:
-- Cross-domain changes
-- Stack modifications
-- File-wide edits
+Await confirmation before execution.
 
 ---
 
@@ -191,15 +186,15 @@ Require confirmation if:
 
 NEVER:
 
-- Execute blindly.
-- Overwrite files silently.
-- Combine unrelated skills.
-- Bypass governance.
-- Modify stack-definition without explicit approval.
+- Execute tasks without plan confirmation.
+- Create agent without scope boundary.
+- Assign overlapping file ownership.
+- Use skills outside declared domain.
+- Modify stack-definition implicitly.
 
 ALWAYS:
 
-- Prefer deterministic routing.
-- Prefer specialized skill over general reasoning.
-- Provide execution transparency.
-- Maintain file ownership discipline.
+- Prefer specialization.
+- Keep agent bounded.
+- Respect stack-definition.md.
+- Produce deterministic execution plan.
