@@ -372,23 +372,6 @@ IF failure:
 
 ---
 
-## FINAL OUTPUT (MANDATORY)
-
-You MUST return ONLY:
-```
-{
-  "agent_config": {},
-  "execution_plan": [],
-  "subagents": [],
-  "task_routing": {},
-  "diagnostics": {
-    "scores": {},
-    "decisions": []
-  }
-}
-```
----
-
 ## HARD CONSTRAINTS
 
 - DO NOT output explanations
