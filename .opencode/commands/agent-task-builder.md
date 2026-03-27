@@ -1,205 +1,276 @@
----
-name: agent-task-builder
-description: Ingest a task list or implementation plan, analyze available skills, construct the optimal bounded agent, and execute assigned skills via run-subtask-skill when subtask execution is required.
----
 
-# agent-tasks-builder
-
-## Purpose
-
-This command:
-
-1. Reads a task list or implementation plan.
-2. Scans available skills.
-3. Clusters tasks by domain.
-4. Constructs the optimal bounded agent configuration.
-5. Assigns skills.
-6. Determines execution mode.
-7. If subtask execution is required, invokes run-subtask-skill.md.
-8. Returns deterministic execution plan.
-
-This command does NOT directly execute skills.
-It delegates execution through run-subtask-skill when required.
+## Description
+Analyze a list of tasks or implementation steps, evaluate available skills, and construct an optimized agent (or multi-agent system) to execute the tasks fully. The command determines execution strategy (inline vs subagent), builds agent configuration, and routes tasks using a hybrid controlled/uncontrolled subagent model.
 
 ---
+# Agent Task Builder
 
-# Step 1 — Ingest Task Source
+## Inputs
 
-Read:
+### Required
+- Task list OR implementation plan
 
-- tasks/*
-- implementation lists
-- user-provided checklist
-- structured plan
+### Optional
+- Available skills registry
+- User preferences:
+```json
+{
+  "speed_vs_accuracy": "balanced | fast | high_accuracy",
+  "parallelism": true,
+  "execution_mode": "auto | controlled | flexible"
+}
+```
+### Core Systems Used
+- rule-engine-template.md → decision making
+- communication-protocol-template.md → agent communication
+- run-subtask-skill.md → controlled subagent execution
 
-Extract:
+# Execution Pipeline
+## STEP 1: INGEST & NORMALIZE INPUT
+- Convert input into structured task list
+- Ensure atomic granularity
+```
+{
+  "task_id": "",
+  "description": ""
+}
+```
+## STEP 2: TASK DECOMPOSITION
+Break tasks into smallest executable units.
 
-- Task objectives
-- File impact zones
-- Required outputs
-- Domain classification
-- Dependency chains
+**For each task identify:**
 
----
+- dependencies
+- required outputs
+- domain (frontend/backend/db/etc.)
 
-# Step 2 — Domain Clustering
+## STEP 3: TASK CLASSIFICATION (RULE ENGINE)
 
-Group tasks:
+**For each task determine:**
+```
+{
+  "type": "analysis | implementation | validation | orchestration",
+  "complexity": "low | medium | high",
+  "coupling": "tight | loose",
+  "parallelizable": true,
+  "dependencies": []
+}
+```
+## STEP 4: SKILL MAPPING
+- Match tasks → available skills
+- Rank:
+  - exact match
+  - partial match
+  - fallback (inline)
+```
+{
+  "task_id": "",
+  "skill": "",
+  "confidence": "high | medium | low"
+}
+```
+## STEP 5: EXECUTION STRATEGY DECISION
 
-- UI/UX
-- Backend
-- Database
-- Architecture
-- Testing
-- DevOps
-- Documentation
+**Determine execution type:**
 
-If single-domain → Single agent.
-If multi-domain → Multi-agent plan.
+**Inline Execution**
+- low complexity
+- tightly coupled
+- quick operations
 
----
+**Subagent Execution**
+- high complexity
+- parallelizable
+- isolated work
 
-# Step 3 — Skill Mapping
+**Multi-Subagent Execution**
+- large system tasks
+- decomposable subtasks
 
-Scan available skills.
+## STEP 6: EXECUTION MODE DECISION (CRITICAL)
 
-For each skill identify:
+**Each subagent task must be labeled:**
+```
+{
+  "mode": "controlled | flexible"
+}
+```
+**Controlled Mode**
 
-- Domain alignment
-- Required inputs
-- Output type
-- Tool usage
-- File scope
+Use when:
+  - deterministic output required
+  - structured pipelines
+  - repeatable builds
 
-Create skill-to-task assignment matrix.
+**Flexible Mode**
 
----
+Use when:
+  - exploration needed
+  - research tasks
+  - loosely defined outputs
 
-# Step 4 — Agent Construction
+## STEP 7: AGENT TYPE SELECTION
+| Task Type |	Agent |
+|-----------|-------|
+| Planning | Plan |
+| Implementation |	Build |
+| Research	| Explore |
+| Complex multi-step |	General |
 
-Generate agent:
+## STEP 8: BUILD EXECUTION GRAPH
 
-# Agent: [Generated Name]
+Construct:
+```
+{
+  "execution_plan": [
+    {
+      "task_id": "",
+      "execution": "inline | subagent",
+      "mode": "controlled | flexible",
+      "skill": "",
+      "dependencies": []
+    }
+  ]
+}
+```
+## STEP 9: AGENT CONFIG GENERATION
 
-## Mission
-Clear objective.
+Create primary agent:
+```
+{
+  "name": "generated-agent",
+  "mode": "primary",
+  "model": "opencode/gpt-5.1-codex",
+  "permissions": {
+    "edit": "allow",
+    "bash": "allow"
+  },
+  "max_steps": 25
+}
+```
+## STEP 10: SUBAGENT GENERATION
 
-## Scope
-Allowed directories:
-Prohibited directories:
+If required, generate subagents:
+```
+{
+  "name": "auth-subagent",
+  "mode": "subagent",
+  "permissions": {
+    "edit": "allow"
+  }
+}
+```
+## STEP 11: EXECUTION ROUTING ENGINE
 
-## Assigned Skills
-List of skills.
+**For each task:**
 
-## Workflow
-Ordered execution plan.
+**CASE 1:INLINE**
+- Execute directly in current context
+- Maintain shared memory
 
-## Validation Checklist
-Pre-output verification.
-
-## Execution Mode
-Subtask / Same Context
-
----
-
-# Step 5 — Execution Mode Decision
-
-Use Subtask Mode when:
-
-- Heavy file modifications
-- Multi-step skill logic
-- Isolation required
-- Cross-domain risk
-- Context overflow risk
-
-When Subtask Mode selected:
-
-DO NOT execute skill directly.
-
-Instead:
-
+**CASE 2: SUBAGENT (CONTROLLED)**
 Invoke:
-
-run-subtask-skill.md
+`run-subtask-skill.md`
 
 With:
+```
+{
+  "skill": "",
+  "input": {},
+  "context": "isolated"
+}
+```
+**CASE 3: SUBAGENT (FLEXIBLE)**
 
-- skill name
-- task description
-- scoped instructions
-- file boundaries
-- validation checklist
+Invoke subagent naturally:
 
----
+`@subagent-name perform task`
 
-# Subtask Invocation Format
+## STEP 12: COMMUNICATION PROTOCOL ENFORCEMENT
 
-When calling run-subtask-skill:
+All task transfers must follow:
+```
+{
+  "sender": "",
+  "receiver": "",
+  "task_id": "",
+  "instructions": "",
+  "context": {},
+  "expected_output": ""
+}
+```
+## STEP 13: PARALLEL EXECUTION HANDLING
 
-Provide:
+If tasks are parallelizable:
+```
+{
+  "parallel_tasks": []
+}
+```
+Execute simultaneously using subagents.
 
-Skill:
-Task:
-Scope:
-Expected Output:
-Validation Requirements:
+## STEP 14: ERROR HANDLING
 
-Never omit scope.
-Never omit validation requirements.
-
----
-
-# Step 6 — Conflict Validation
-
-Before execution:
-
-Check:
-
-- Scope overlap
-- Duplicate file ownership
-- Stack-definition violations
-- Circular dependencies
-- Skill redundancy
-
-If conflict detected:
-Pause and request clarification.
-
----
-
-# Step 7 — Output Plan
+If failure occurs:
+```
+{
+  "status": "failed",
+  "retry": true,
+  "fallback": "inline | alternate skill"
+}
+```
+## STEP 15: FINAL OUTPUT
 
 Return:
-
-## Agent Construction Plan
-
-1. Agent Name
-2. Tasks Assigned
-3. Skills Used
-4. Execution Mode
-5. Files Impacted
-6. run-subtask-skill invoked? (Yes/No)
-7. Risk Assessment
-
-Require confirmation if:
-- Cross-domain impact
-- Stack changes
-- Broad file modification
-
----
-
-# Hard Constraints
-
-NEVER:
-
-- Execute skills directly when subtask required.
-- Modify files outside defined scope.
-- Chain skills without order definition.
-- Overwrite stack-definition implicitly.
-- Bypass run-subtask-skill for isolated tasks.
-
-ALWAYS:
-
-- Delegate subtask execution properly.
-- Maintain bounded agent scope.
-- Provide deterministic execution plan.
-- Respect stack-definition.md.
+```
+{
+  "agent_config": {},
+  "execution_plan": [],
+  "subagents": [],
+  "task_routing": {},
+  "summary": ""
+}
+```
+### Behavior Rules
+- Prefer subagents for high complexity tasks
+- Avoid context overload
+- Maximize safe parallel execution
+- Use controlled mode for deterministic pipelines
+- Use flexible mode for exploration
+### Example Usage
+```
+agent-task-builder:
+- Build authentication system
+- Create database schema
+- Build dashboard UI
+- Add API routes
+```
+### Example Output (Simplified)
+```
+{
+  "execution_plan": [
+    {
+      "task": "Create database schema",
+      "execution": "subagent",
+      "mode": "controlled",
+      "skill": "db-schema-skill"
+    },
+    {
+      "task": "Build auth system",
+      "execution": "subagent",
+      "mode": "controlled",
+      "skill": "auth-module-skill"
+    },
+    {
+      "task": "Build dashboard UI",
+      "execution": "inline"
+    }
+  ]
+}
+```
+#### Notes
+- Uses rule-engine-template.md for all decisions
+- Uses communication-protocol-template.md for all agent interactions
+- Uses run-subtask-skill.md for controlled execution
+- Supports multi-agent orchestration
+- Designed for deterministic + scalable agent generation
