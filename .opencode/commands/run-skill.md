@@ -55,13 +55,22 @@ Error: No skill provided
 
 **Define allowed skills:**
 
+- Mapping-Ux-flows
+- Test-driven-development
+- Wireframe-generator
+- backend-architecture-drafter
+- debugging-wizard
+- defined-best-practices
+- defining-tech-stack
+- dynamic-prd-drafter
+- dynamic-wireframe-mapper
+- frontend-architecture
+- security-review
+- swift-expert
 - systematic-debugger
-- test-driven-development
-- git-worktree-orchestrator
-- worktree-merge-manager
-- playwright-e2e-runner
-- mvp-gap-analyzer
-- component-dependency-mapper
+- ui-ux-design-draft
+- using-git-worktrees
+- worktree-manager
 
 **IF `skill` NOT in registry:**
 → STOP
@@ -104,5 +113,5 @@ runCommand("execute-skill", {
     feature: "user login"
   }
 })
-End of Command
 ```
+
