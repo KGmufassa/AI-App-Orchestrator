@@ -3,7 +3,7 @@ name: construct-agent
 description: Ingest a task list or implementation plan, analyze available skills, and construct a bounded agent configuration best suited to execute the current workload.
 ---
 
-# /construct-agent
+# Agent-Tasks-Builder
 
 ## Purpose
 
