@@ -33,22 +33,24 @@ Example:
     "error": "test failure"
   }
 }
+```
 
 # Execution Rules (MANDATORY)
-MUST validate skill before execution
-MUST pass args directly to skill
-MUST run skill as subtask
-MUST NOT contain business logic
-MUST return raw skill output
-MUST fail safely on invalid input
-Step 1 — Validate Input
+- MUST validate skill before execution
+- MUST pass args directly to skill
+- MUST run skill as subtask
+- MUST NOT contain business logic
+- MUST return raw skill output
+- MUST fail safely on invalid input
 
-### IF skill is missing:
+# Step 1 — Validate Input
+
+### IF `skill` is missing:
 → STOP
 → Output:
-
+```
 Error: No skill provided
-
+```
 # Step 2 — Skill Registry Validation
 
 **Define allowed skills:**
@@ -61,36 +63,41 @@ Error: No skill provided
 - mvp-gap-analyzer
 - component-dependency-mapper
 
-**IF skill NOT in registry:**
+**IF `skill` NOT in registry:**
 → STOP
 → Output:
+```
+Error: Invalid skill `"<skill>"`
+```
+# Step 3 — Normalize Args
 
-Error: Invalid skill "<skill>"
-Step 3 — Normalize Args
+**IF `args` is missing:**
+→ set `args = {}`
 
-IF args is missing:
-→ set args = {}
+# Step 4 — Execute Skill
+`runSkill(skill, args)`
 
-Step 4 — Execute Skill
-runSkill(skill, args)
-Step 5 — Return Output
+# Step 5 — Return Output
 
 Return result exactly as produced by the skill.
 
-Error Handling
-Missing Skill
-Stop execution
-Invalid Skill
-Reject execution
-Skill Failure
-Pass error through (do NOT modify)
-Behavior Summary
-Universal skill dispatcher
-Enables dynamic orchestration
-Supports subagent-like execution
-Keeps system modular and scalable
-No embedded logic (pure routing layer)
+## Error Handling
+### Missing Skill
+- Stop execution
+### Invalid Skill
+- Reject execution
+### Skill Failure
+- Pass error through (do NOT modify)
+
+## Behavior Summary
+- Universal skill dispatcher
+- Enables dynamic orchestration
+- Supports subagent-like execution
+- Keeps system modular and scalable
+- No embedded logic (pure routing layer)
+
 Example Usage
+```
 runCommand("execute-skill", {
   skill: "test-driven-development",
   args: {
@@ -98,3 +105,4 @@ runCommand("execute-skill", {
   }
 })
 End of Command
+```
