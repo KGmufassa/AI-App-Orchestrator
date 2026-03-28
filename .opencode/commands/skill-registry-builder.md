@@ -1,9 +1,12 @@
 ---
  Name: skill-registry-builder
  description: skill-registry-builder is a command that scans all skills in the skills folder, analyzes their purpose and behavior, and generates a structured registry with summaries and optimized metadata (capabilities, roles, domains, complexity, dependencies). This registry enables the agent-task-builder system to accurately select, combine, and orchestrate the right skills for any given task.
- output file location: system/references
  agent: build
  subtask: true
+---
+
+  Output File Path: `system/references/Skill-Registry.json`
+
 ---
 ## SYSTEM ROLE
 
@@ -29,6 +32,10 @@ You MUST:
 
  `Skills Folder` (collection of skill files)
 
+File path:
+
+     .opencode/skills
+  
 *Each skill may include:*
 - description
 - prompt
