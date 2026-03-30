@@ -1,12 +1,12 @@
 ---
-Name: modular-skill-generator.md
-Description: 
+Command Name: modular-skill-generator.md
+Description: Creates modular, production-grade skills from documentation by extracting intent, synthesizing workflows, patterns, decisions, constraints, and failures, embedding security and best practices, and routing execution through reference-linked, lightweight skill logic for agents
 Agent: build
 Subtask: true
 ---
 
 
-# COMMAND: create-modular-skill-generator
+# Modular Skill Generator
 
 ## PURPOSE
 Compile documentation into a modular, production-grade skill system where:
@@ -118,9 +118,7 @@ KEEP score >= min_relevance_score
 
 ## 6. INTENT EXTRACTION (CORE UPGRADE)
 
-**FOR each chunk:**
-
-ASSIGN PRIMARY INTENT:
+**ASSIGN PRIMARY INTENT FOR EACH CHUNK:**
 
 - execute → user is trying to perform steps
 - implement → user is applying a method or API
